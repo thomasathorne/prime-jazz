@@ -52,7 +52,7 @@
   (at (metro beat) (play-chord (factors n)))
   (apply-by (metro (inc beat)) #'prime-jazz (inc beat) metro (inc n) []))
 
-;(prime-jazz (m) m 0)
+;(prime-jazz (m) m 1)
 
 ;(prime-jazz (m) m 4000)
 
