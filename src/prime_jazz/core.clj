@@ -1,23 +1,15 @@
 (ns prime-jazz.core
   (:require [overtone.core :refer :all]
-            [prime-jazz.synth :refer :all]))
+            [prime-jazz.synth :refer :all]
+            [prime-jazz.melody :refer :all]))
 
 (definst saw-pulse [freq 440 dur 0.4]
   (let [env (env-gen (perc 0.01 dur) 1 1 0 1 FREE)]
-    (* 0.3 env (saw freq))))
-
-(defn minor-scale [base n]
-  (let [octs   (quot n 7)
-        degree (rem n 7)]
-    (* base
-       (Math/pow 2 octs)
-       ({0 1
-         1 (/ 9 8)
-         2 (/ 32 27)
-         3 (/ 4 3)
-         4 (/ 3 2)
-         5 (/ 128 81)
-         6 (/ 16 9)} degree))))
+    (resonz
+     (resonz
+      (* 2 env (saw freq))
+      2030 0.3)
+     877 0.4)))
 
 (defn pul [inst n]
   (inst (minor-scale 100 n)))
@@ -42,7 +34,7 @@
 (defn play-chord
   [ps]
   (mapv
-   (comp #(pul bounce %)
+   (comp #(pul saw-pulse %)
          (zipmap primes (range)))
    ps))
 
@@ -51,7 +43,9 @@
 (defn prime-jazz
   [beat metro n]
   (at (metro beat) (play-chord (factors n)))
-  (apply-by (metro (inc beat)) #'prime-jazz (inc beat) metro (inc n) []))
+  (apply-by (metro (inc beat))
+            #'prime-jazz
+            [(inc beat) metro (inc n)]))
 
 ;(prime-jazz (m) m 1)
 
