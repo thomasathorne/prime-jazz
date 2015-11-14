@@ -19,3 +19,19 @@
                        (range) harms)))
       2400.0 0.6)
      1100.0 0.6)))
+
+(definst vib-sax
+  [freq 440 dur 3]
+  (let [env (env-gen:kr (lin 0.05 dur 0.4) 1 1 0 1 FREE)
+        vib (sin-osc:kr (env-gen:kr (lin 2 dur 0.2) 1 3 5))]
+    (resonz
+     (resonz
+      (* env
+         (+ 1 (* 0.1 vib))
+         (apply + (map (fn [i h]
+                         (* h (sin-osc (* i freq (+ 1 (* vib 0.007))))))
+                       (range)
+                       [1 0.95 0.9 0.89 0.81 0.3 0.75 0.9 0.6 0.2
+                        0.4 0.1 0.3 0.2 0.3 0.1 0.3])))
+      (+ 800 (* 20 vib)) 0.6)
+     (+ 1100.0 (* 40 vib)) 0.6)))
